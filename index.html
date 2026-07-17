@@ -1540,7 +1540,11 @@ async function gsWriteWithResponse(action, data) {
   const encoded = btoa(unescape(encodeURIComponent(payload)));
   const url = GS.scriptUrl + '?payload=' + encodeURIComponent(encoded);
   const r = await fetch(url, { method: 'GET' });
-  const result = await r.json();
+  const body = await r.text();
+  console.log('[GS-DIAG]', action, 'HTTP', r.status, 'len', body.length, 'first80:', JSON.stringify(body.slice(0, 80)));
+  let result;
+  try { result = JSON.parse(body); }
+  catch (e) { throw new Error('GAS did not return JSON [HTTP ' + r.status + ', ' + body.length + ' chars]. First 300: ' + body.slice(0, 300)); }
   if (result.status === 'error') throw new Error(result.message);
   return result;
 }
@@ -5234,15 +5238,8 @@ async function caxGenerate() {
 
   try {
     const proxyResult = await gsWriteWithResponse('generateCAScenario', { type, diff, proj });
-    const raw = proxyResult.text || '';
-    let text = raw.trim();
-    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-    if (fence) text = fence[1].trim();
-    const first = text.indexOf('{'), last = text.lastIndexOf('}');
-    if (first !== -1 && last > first) text = text.slice(first, last + 1);
-    let sc;
-    try { sc = JSON.parse(text); }
-    catch (pe) { throw new Error(pe.message + ' — model returned: ' + raw.slice(0, 300)); }
+    let text = (proxyResult.text || '').trim().replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+    const sc = JSON.parse(text);
 
     draftArea.innerHTML = `
       <div class="cax-notice warn">⚠ Review this draft carefully before approving. Edit if needed.</div>
