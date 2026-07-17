@@ -5234,8 +5234,15 @@ async function caxGenerate() {
 
   try {
     const proxyResult = await gsWriteWithResponse('generateCAScenario', { type, diff, proj });
-    let text = (proxyResult.text || '').trim().replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-    const sc = JSON.parse(text);
+    const raw = proxyResult.text || '';
+    let text = raw.trim();
+    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fence) text = fence[1].trim();
+    const first = text.indexOf('{'), last = text.lastIndexOf('}');
+    if (first !== -1 && last > first) text = text.slice(first, last + 1);
+    let sc;
+    try { sc = JSON.parse(text); }
+    catch (pe) { throw new Error(pe.message + ' — model returned: ' + raw.slice(0, 300)); }
 
     draftArea.innerHTML = `
       <div class="cax-notice warn">⚠ Review this draft carefully before approving. Edit if needed.</div>
