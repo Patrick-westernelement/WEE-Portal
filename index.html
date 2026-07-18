@@ -1470,8 +1470,9 @@ const FB_SCHEMA = {
   Subscriptions: ['name','users','renewal','cost','billing','notes'],
   Deadlines:     ['project','desc','due','assignTo','createdBy','done'],
   Training:      ['user','xp','completed'],
+  Memberships:   ['group','sub','name','holder','expires'],
 };
-const FB_NODE = { Tasks:'tasks', CA:'ca', Projects:'projects', RFPs:'rfps', Subscriptions:'subscriptions', Deadlines:'deadlines', Training:'training', Expenses:'expenses', Timesheets:'timesheets', CAExercise:'caexercise' };
+const FB_NODE = { Tasks:'tasks', CA:'ca', Projects:'projects', RFPs:'rfps', Subscriptions:'subscriptions', Deadlines:'deadlines', Training:'training', Expenses:'expenses', Timesheets:'timesheets', Memberships:'memberships', CAExercise:'caexercise' };
 
 const FB_CACHE = {};
 const FB_KEYS  = {};
@@ -1512,6 +1513,7 @@ async function gsWrite(action, data) {
       case 'appendRFP':      await db.ref('rfps').push(rowToObj('RFPs', data.values)); break;
       case 'appendSub':      await db.ref('subscriptions').push(rowToObj('Subscriptions', data.values)); break;
       case 'appendDeadline': await db.ref('deadlines').push(rowToObj('Deadlines', data.values)); break;
+      case 'appendMemb':     await db.ref('memberships').push(rowToObj('Memberships', data.values)); break;
       case 'updateRow': { const k = fbKeyForRow(data.sheet, data.row); if (k) await db.ref(FB_NODE[data.sheet] + '/' + k).set(rowToObj(data.sheet, data.values)); break; }
       case 'deleteRow': { const k = fbKeyForRow(data.sheet, data.row); if (k) await db.ref(FB_NODE[data.sheet] + '/' + k).remove(); break; }
       case 'updateRFP': { const k = fbKeyForRow('RFPs', data.row); if (k) await db.ref('rfps/' + k).set(rowToObj('RFPs', data.values)); break; }
@@ -1561,7 +1563,7 @@ function onDataChange(node) {
   _fbRefreshT = setTimeout(refreshAllFromCache, 60);
 }
 async function refreshAllFromCache() {
-  await Promise.allSettled([loadTasksFromSP(), loadCAFromSP(), loadProjectsFromSheet(), loadRFPs(), loadExpenses(), loadTimesheets(), loadSubs(), loadDeadlines()]);
+  await Promise.allSettled([loadTasksFromSP(), loadCAFromSP(), loadProjectsFromSheet(), loadRFPs(), loadExpenses(), loadTimesheets(), loadSubs(), loadDeadlines(), loadMembs()]);
   const p = currentPage;
   if (p === 'dashboard') { renderTasks(); renderCA(); updateStats(); renderProjects(); renderDeadlines(); renderDashUtilization(); }
   else if (p === 'projects') renderProjects();
@@ -1589,6 +1591,7 @@ function attachRealtimeListeners() {
   if (isAdmin) {
     fbOn(db.ref('rfps'), 'rfps');
     fbOn(db.ref('subscriptions'), 'subscriptions');
+    fbOn(db.ref('memberships'), 'memberships');
     fbOn(db.ref('expenses'), 'expenses');
     fbOn(db.ref('timesheets'), 'timesheets');
   } else {
@@ -1857,7 +1860,7 @@ async function initApp() {
 
 async function silentRefresh() {
   try {
-    await Promise.allSettled([loadTasksFromSP(), loadCAFromSP(), loadProjectsFromSheet(), loadRFPs(), loadExpenses(), loadTimesheets(), loadSubs(), loadDeadlines()]);
+    await Promise.allSettled([loadTasksFromSP(), loadCAFromSP(), loadProjectsFromSheet(), loadRFPs(), loadExpenses(), loadTimesheets(), loadSubs(), loadDeadlines(), loadMembs()]);
     if (currentPage === 'dashboard') { renderTasks(); renderCA(); updateStats(); renderProjects(); renderDeadlines(); renderDashUtilization(); }
     else if (currentPage === 'projects') renderProjects();
     else if (currentPage === 'pursuits') renderPursuits();
@@ -2681,13 +2684,14 @@ function closeSop() { document.getElementById('sopOverlay').classList.remove('op
 function renderAdmin() {
   const el = document.getElementById('adminInner');
   if (!CU || CU.type !== 'admin') { el.innerHTML = `<div class="access-denied"><div class="lico">🔐</div><h2>Access Restricted</h2><p>The Admin Panel requires Administrator privileges.</p></div>`; return; }
+  if (el && document.activeElement && el.contains(document.activeElement) && document.activeElement.tagName === 'INPUT') { refreshRenewCard(); return; }
   el.innerHTML = `
   <div class="sec-hdr"><div><h2>Admin Panel</h2><p>System administration, user management, and audit log</p></div></div>
   <div class="g4">
     <div class="sc"><div class="gblob" style="background:var(--teal)"></div><div class="slbl">Active Users</div><div class="sval ct">5</div><div class="ssub">All sessions healthy</div></div>
     <div class="sc"><div class="gblob" style="background:var(--blue)"></div><div class="slbl">Tasks Logged</div><div class="sval cb">${tasks.length}</div><div class="ssub">${tasks.filter(t=>!t.done).length} open</div></div>
     <div class="sc"><div class="gblob" style="background:var(--warn)"></div><div class="slbl">CA Items</div><div class="sval cw">${caItems.length}</div><div class="ssub">${caItems.filter(c=>c.status!=='Closed').length} open</div></div>
-    <div class="sc"><div class="gblob" style="background:var(--danger)"></div><div class="slbl">Incidents YTD</div><div class="sval cd">0</div><div class="ssub">Zero harm record ✓</div></div>
+    <div class="sc"><div class="gblob" style="background:var(--danger)"></div><div class="slbl">Renewals Due</div><div class="sval cd" id="renewDueVal">${countRenewalsDue()}</div><div class="ssub">expiring within 30 days</div></div>
   </div>
   <div class="g2 mt4">
     <div class="card">
@@ -2714,7 +2718,7 @@ function renderAdmin() {
   <div class="card mt4">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <div class="cttl" style="margin-bottom:0">🏛 Memberships &amp; Subscriptions</div>
-      <div style="font-size:11px;color:var(--text-400)">Click any date to edit — status updates automatically</div>
+      <div style="font-size:11px;color:var(--text-400)">Type to edit any field · use + Add under each region · status auto-updates</div>
     </div>
     <table class="dtbl" id="membTable">
       <thead><tr><th>Certification / Membership</th><th>Holder</th><th>Expires</th><th>Status</th></tr></thead>
@@ -2731,7 +2735,10 @@ function renderAdmin() {
 }
 
 /* ─── MEMBERSHIPS ────────────────────────────── */
-const MEMBS = [
+let membsList = [];
+let membsSeedAttempted = false;
+const JURISDICTIONS = ['British Columbia','Alberta','Nunavut','Nevada (USA)','Insurance'];
+const MEMBS_DEFAULT = [
   // ── BRITISH COLUMBIA ──────────────────────────────────────
   { group:'British Columbia', sub:'P.Eng. Licence',             name:'Engineers & Geoscientists BC (EGBC)',        holder:'Patrick Krzesinski',         expires:'2026-12-31' },
   { group:'British Columbia', sub:'Company Permit to Practice', name:'EGBC — Company Permit to Practice',          holder:'Western Element Engineering', expires:'2026-05-31' },
@@ -2764,44 +2771,108 @@ function membStatus(expires) {
   return             { tag:'t-ok',   label:'Active'   };
 }
 
-function renderMemberships() {
+function escAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+
+function daysUntil(dateStr){ if(!dateStr) return Infinity; return (new Date(dateStr + 'T00:00:00') - new Date()) / 86400000; }
+
+function countRenewalsDue(){
+  let n = 0;
+  (membsList||[]).forEach(m => { if (m.expires && daysUntil(m.expires) <= 30) n++; });
+  (typeof subs !== 'undefined' ? subs : []).forEach(s => { if (s.renewal && daysUntil(s.renewal) <= 30) n++; });
+  return n;
+}
+function refreshRenewCard(){ const el = document.getElementById('renewDueVal'); if (el) el.textContent = countRenewalsDue(); }
+
+async function loadMembs(){
+  try {
+    const rows = await gsGet('Memberships!A2:E200');
+    membsList = (rows||[]).map((r,i) => ({
+      id: i+2, spId: i+2, rowNum: i+2,
+      group:   String(r[0]||'').trim(),
+      sub:     String(r[1]||'').trim(),
+      name:    String(r[2]||'').trim(),
+      holder:  String(r[3]||'').trim(),
+      expires: String(r[4]||'').trim(),
+    }));
+  } catch(e){ console.error('Memberships load failed:', e); }
+  maybeSeedMemberships();
+}
+
+function maybeSeedMemberships(){
+  if (membsSeedAttempted) return;
+  const cache = FB_CACHE['memberships'];
+  if (cache === undefined) return;                 // node not loaded yet
+  membsSeedAttempted = true;
+  if (Object.keys(cache).length > 0) return;       // already has data
+  if (CU && CU.type === 'admin'){
+    const obj = {};
+    MEMBS_DEFAULT.forEach((m,i) => { obj['m'+String(i).padStart(2,'0')] = { group:m.group, sub:m.sub, name:m.name, holder:m.holder, expires:m.expires }; });
+    db.ref('memberships').set(obj).then(()=>toast('✓ Memberships loaded')).catch(e=>console.error('seed memberships', e));
+  }
+}
+
+function membRow(m){ return [m.group||'', m.sub||'', m.name||'', m.holder||'', m.expires||'']; }
+
+function renderMemberships(){
   const tbody = document.getElementById('membBody');
   if (!tbody) return;
+  // Don't rebuild while the user is typing in a field here (avoids focus loss from live-sync echoes)
+  if (document.activeElement && tbody.contains(document.activeElement)) { refreshRenewCard(); return; }
   tbody.innerHTML = '';
+  const inp = "background:var(--bg-raised);border:1px solid var(--bd-dim);border-radius:6px;padding:5px 8px;color:var(--text-200);font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box";
 
-  // Group by jurisdiction
   const groups = {};
-  MEMBS.forEach((m, i) => {
-    if (!groups[m.group]) groups[m.group] = [];
-    groups[m.group].push({ ...m, idx: i });
-  });
+  (membsList||[]).forEach(m => { const g = m.group || 'Other'; (groups[g] = groups[g] || []).push(m); });
+  const known = JURISDICTIONS.filter(g => groups[g]);
+  const extra = Object.keys(groups).filter(g => !JURISDICTIONS.includes(g));
+  const order = [...known, ...extra];
 
-  Object.entries(groups).forEach(([group, items]) => {
-    // Group header row
-    const groupRow = document.createElement('tr');
-    groupRow.innerHTML = `<td colspan="4" style="padding:10px 8px 4px;font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--teal);border-bottom:1px solid var(--bd-dim);background:var(--bg-raised)">${group.toUpperCase()}</td>`;
-    tbody.appendChild(groupRow);
-
-    items.forEach(m => {
+  order.forEach(group => {
+    const gr = document.createElement('tr');
+    gr.innerHTML = `<td colspan="4" style="padding:12px 8px 4px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--teal)">${escAttr(group).toUpperCase()}</span><button class="btn-sm" style="font-size:10px;padding:3px 9px" onclick="addMembership('${escAttr(group)}')">+ Add</button></div></td>`;
+    tbody.appendChild(gr);
+    (groups[group]||[]).forEach(m => {
       const s = membStatus(m.expires);
       const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><span style="font-size:11px;color:var(--text-400);display:block;margin-bottom:1px">${m.sub}</span>${m.name}</td>
-        <td style="font-size:13px">${m.holder}</td>
-        <td><input type="month" style="${dateInputStyle}" value="${m.expires.slice(0,7)}" onchange="updateMembDate(${m.idx},'expires',this.value)" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--bd-dim)'"></td>
-        <td><span class="tag ${s.tag}" id="memb-status-${m.idx}">${s.label}</span></td>
-      `;
+      tr.innerHTML =
+        '<td style="padding:5px 8px;vertical-align:top">'
+        + `<input value="${escAttr(m.sub)}" placeholder="Type (e.g. P.Eng. Licence)" onchange="updateMembField('${m.id}','sub',this.value)" style="${inp};font-size:10px;color:var(--text-400);margin-bottom:4px">`
+        + `<input value="${escAttr(m.name)}" placeholder="Certification / body" onchange="updateMembField('${m.id}','name',this.value)" style="${inp};font-weight:600">`
+        + '</td>'
+        + `<td style="padding:5px 8px;vertical-align:top"><input value="${escAttr(m.holder)}" placeholder="Holder" onchange="updateMembField('${m.id}','holder',this.value)" style="${inp}"></td>`
+        + `<td style="padding:5px 8px;vertical-align:top"><input type="month" value="${(m.expires||'').slice(0,7)}" onchange="updateMembField('${m.id}','expires',this.value)" style="${dateInputStyle}"></td>`
+        + `<td style="padding:5px 8px;vertical-align:top;white-space:nowrap"><span class="tag ${s.tag}" id="memb-badge-${m.id}">${s.label}</span> <button class="tdel" onclick="deleteMemb('${m.id}')" title="Delete">✕</button></td>`;
       tbody.appendChild(tr);
     });
   });
+  refreshRenewCard();
 }
 
-function updateMembDate(i, field, val) {
-  MEMBS[i][field] = val + '-01';
-  const s = membStatus(MEMBS[i].expires);
-  const el = document.getElementById('memb-status-' + i);
-  if (el) { el.className = 'tag ' + s.tag; el.textContent = s.label; }
-  toast('Date updated — status refreshed');
+function updateMembField(id, field, val){
+  const m = (membsList||[]).find(x => String(x.id) === String(id));
+  if (!m) return;
+  if (field === 'expires') val = val ? (val.length === 7 ? val + '-01' : val) : '';
+  m[field] = val;
+  gsWrite('updateRow', { sheet:'Memberships', row:m.rowNum, values: membRow(m) }).catch(e => console.error('memb update', e));
+  if (field === 'expires'){ const s = membStatus(m.expires); const b = document.getElementById('memb-badge-' + id); if (b){ b.className = 'tag ' + s.tag; b.textContent = s.label; } }
+  refreshRenewCard();
+  toast('Saved');
+}
+
+async function addMembership(group){
+  try {
+    await gsWrite('appendMemb', { values: [group || 'British Columbia', '', '', '', ''] });
+    toast('Membership added — fill in the fields');
+  } catch(e){ toast('⚠ Could not add'); console.error(e); }
+}
+
+function deleteMemb(id){
+  const m = (membsList||[]).find(x => String(x.id) === String(id));
+  if (!m) return;
+  membsList = membsList.filter(x => String(x.id) !== String(id));
+  renderMemberships();
+  toast('Membership deleted');
+  gsWrite('deleteRow', { sheet:'Memberships', row:m.rowNum }).catch(e => console.error('memb delete', e));
 }
 
 /* ─── DEADLINES ──────────────────────────────── */
