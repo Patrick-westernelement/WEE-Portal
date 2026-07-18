@@ -1541,10 +1541,9 @@ async function gsWriteWithResponse(action, data) {
   const url = GS.scriptUrl + '?payload=' + encodeURIComponent(encoded);
   const r = await fetch(url, { method: 'GET' });
   const body = await r.text();
-  console.log('[GS-DIAG]', action, 'HTTP', r.status, 'len', body.length, 'first80:', JSON.stringify(body.slice(0, 80)));
   let result;
   try { result = JSON.parse(body); }
-  catch (e) { throw new Error('GAS did not return JSON [HTTP ' + r.status + ', ' + body.length + ' chars]. First 300: ' + body.slice(0, 300)); }
+  catch (e) { throw new Error('GAS did not return JSON [HTTP ' + r.status + ']: ' + body.slice(0, 200)); }
   if (result.status === 'error') throw new Error(result.message);
   return result;
 }
