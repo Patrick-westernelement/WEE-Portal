@@ -625,7 +625,70 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .ts-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .ts-locked-notice{background:rgba(26,86,219,.06);border:1px solid rgba(26,86,219,.2);border-radius:var(--rl);padding:12px 16px;font-size:12px;color:var(--blue);margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .ts-proj-total{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--teal);text-align:right;padding-right:4px}
-</style>
+/* ══════ DESIGN TOOLS ══════ */
+#sec-designtools .dt-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+#sec-designtools .dt-tab{padding:8px 18px;border-radius:8px;border:1px solid var(--bd-mid);background:var(--bg-card);color:var(--text-300);font-family:'Bebas Neue',sans-serif;letter-spacing:1px;font-size:14px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+#sec-designtools .dt-tab.act{background:linear-gradient(135deg,var(--teal-dim),var(--blue-dim));color:#fff;border-color:transparent;box-shadow:0 2px 14px var(--teal-glow)}
+#sec-designtools .dt-tab.dt-soon{opacity:.4;cursor:not-allowed}
+#sec-designtools .dt-ctitle{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:14px}
+#sec-designtools .dt-lbl{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--text-400);font-weight:700;margin:14px 0 5px}
+#sec-designtools .dt-inp{width:100%;background:#fff;border:1px solid var(--bd-mid);color:var(--text-100);border-radius:8px;padding:10px 12px;font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color .15s}
+#sec-designtools select.dt-inp{appearance:auto}
+#sec-designtools .dt-inp:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-glow-sm)}
+#sec-designtools .dt-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#sec-designtools .dt-preview{margin-top:8px;font-size:12px;color:var(--text-400);font-family:'IBM Plex Mono',monospace;min-height:15px}
+#sec-designtools .dt-btn-full{width:100%;justify-content:center;margin-top:16px;display:flex;align-items:center;gap:6px;cursor:pointer}
+#sec-designtools .dt-btn-calc{width:100%;justify-content:center;padding:14px;font-size:17px;margin:18px 0;display:flex;align-items:center;gap:8px;cursor:pointer;border-radius:10px}
+#sec-designtools .dt-ctabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+#sec-designtools .dt-ctab{padding:6px 14px;border-radius:20px;border:1px solid var(--bd-mid);background:var(--bg-card);color:var(--text-300);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s}
+#sec-designtools .dt-ctab.act{background:var(--teal);color:#fff;border-color:var(--teal)}
+#sec-designtools .dt-cdesc{font-size:12px;color:var(--text-300);padding:9px 12px;background:var(--bg-raised);border-radius:7px;margin-bottom:12px;border-left:3px solid var(--teal);line-height:1.5}
+#sec-designtools .dt-listhdr{display:flex;justify-content:space-between;align-items:center;margin:6px 0 8px}
+#sec-designtools .dt-btn-ghost{background:transparent;border:1px solid var(--bd-mid);color:var(--text-400);font-size:10px;padding:5px 12px;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.5px}
+#sec-designtools .dt-btn-ghost:hover{border-color:var(--danger);color:var(--danger)}
+#sec-designtools .dt-list{min-height:50px}
+#sec-designtools .dt-item{background:var(--bg-raised);border:1px solid var(--bd-dim);border-radius:8px;padding:9px 12px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
+#sec-designtools .dt-item-info{flex:1;font-size:13px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-family:'Outfit',sans-serif}
+#sec-designtools .dt-pill{background:var(--teal);color:#fff;border-radius:5px;padding:2px 9px;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+#sec-designtools .dt-area{color:var(--text-400);font-size:12px}
+#sec-designtools .dt-x{background:transparent;border:none;color:var(--danger);font-size:15px;cursor:pointer;padding:2px 6px;border-radius:4px;opacity:.7}
+#sec-designtools .dt-x:hover{opacity:1;background:var(--danger-g)}
+#sec-designtools .dt-empty{text-align:center;padding:24px 16px;color:var(--text-400);font-size:13px;border:1px dashed var(--bd-mid);border-radius:8px}
+#sec-designtools .dt-totalbar{margin-top:12px;padding:10px 12px;background:var(--teal-glow-sm);border:1px solid var(--teal-glow);border-radius:8px;font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-family:'IBM Plex Mono',monospace}
+#sec-designtools .dt-totalbar strong{color:var(--teal)}
+#sec-designtools .dt-stitle{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-400);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin:22px 0 12px}
+#sec-designtools .dt-stitle:first-child{margin-top:0}
+#sec-designtools .dt-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+#sec-designtools .dt-sitem{background:var(--bg-raised);border:1px solid var(--bd-dim);border-radius:10px;padding:14px 12px;text-align:center}
+#sec-designtools .dt-sitem.hl{border-color:var(--teal);background:var(--teal-glow-sm)}
+#sec-designtools .dt-val{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;color:var(--teal);letter-spacing:1px}
+#sec-designtools .dt-val.green{color:#15803d}
+#sec-designtools .dt-val.red{color:var(--danger)}
+#sec-designtools .dt-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-400);margin-top:5px;text-transform:uppercase;letter-spacing:.4px}
+#sec-designtools .dt-tablewrap{overflow-x:auto;border-radius:10px;border:1px solid var(--bd-dim)}
+#sec-designtools .dt-table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px;font-family:'Outfit',sans-serif}
+#sec-designtools .dt-table th{padding:9px 14px;text-align:left;background:var(--bg-surface);color:var(--text-400);font-family:'IBM Plex Mono',monospace;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:.6px;white-space:nowrap}
+#sec-designtools .dt-table td{padding:9px 14px;border-top:1px solid var(--bd-dim);vertical-align:middle}
+#sec-designtools .dt-table tr.rec td{background:var(--teal-glow-sm)}
+#sec-designtools .dt-fillwrap{display:flex;align-items:center;gap:8px}
+#sec-designtools .dt-fillbg{background:var(--bd-dim);border-radius:20px;height:9px;width:70px;flex-shrink:0;overflow:hidden}
+#sec-designtools .dt-fillfg{height:100%;border-radius:20px;transition:width .4s}
+#sec-designtools .dt-fillpct{font-weight:700;font-size:13px;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+#sec-designtools .dt-badge{display:inline-block;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;white-space:nowrap;font-family:'IBM Plex Mono',monospace;text-transform:uppercase}
+#sec-designtools .dt-badge.pass{background:rgba(21,128,61,.12);color:#15803d}
+#sec-designtools .dt-badge.fail{background:var(--danger-g);color:var(--danger)}
+#sec-designtools .dt-badge.min{background:var(--teal-glow);color:var(--teal);border:1px solid var(--teal-glow)}
+#sec-designtools .dt-derate{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+#sec-designtools .dt-drow{background:var(--bg-raised);border:1px solid var(--bd-dim);border-radius:8px;padding:10px 14px;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+#sec-designtools .dt-drow.on{border-color:var(--teal);background:var(--teal-glow-sm)}
+#sec-designtools .dt-factor{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px}
+#sec-designtools .df-g{color:#15803d}#sec-designtools .df-y{color:var(--warn)}#sec-designtools .df-r{color:var(--danger)}
+#sec-designtools .dt-note{font-size:12px;color:var(--text-300);background:var(--bg-raised);border:1px solid var(--bd-dim);border-left:3px solid var(--teal);border-radius:8px;padding:12px 14px;margin-top:18px;line-height:1.6}
+#sec-designtools .dt-note strong{color:var(--text-100)}
+#sec-designtools .dt-hidden{display:none!important}
+@media(max-width:768px){#sec-designtools .dt-row2{grid-template-columns:1fr}}
+
+  </style>
 </head>
 <body>
 
@@ -673,6 +736,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
     <div class="ni" id="nav-training" onclick="nav('training',this)"><span class="ni-ico">◈</span>Training Hub</div>
     <div class="ni" id="nav-selfcheck" onclick="nav('selfcheck',this)"><span class="ni-ico">✦</span>Self-Check</div>
     <div class="ni" id="nav-sops" onclick="nav('sops',this)"><span class="ni-ico">◉</span>SOPs</div>
+    <div class="ni" id="nav-designtools" onclick="nav('designtools',this)"><span class="ni-ico">📐</span>Design Tools</div>
     <div class="nlbl" id="anlbl">Administration</div>
     <div class="ni" id="nav-caexercise" onclick="nav('caexercise',this)"><span class="ni-ico">⚡</span>CA Exercise</div>
     <div class="ni" id="nav-expenses" onclick="nav('expenses',this)"><span class="ni-ico">💳</span>Expenses</div>
@@ -1205,6 +1269,65 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 
 
       <!-- ══ CA EXERCISE ══════════════════════════════ -->
+      <!-- ══ DESIGN TOOLS ══════════════════════════════ -->
+      <div class="sec" id="sec-designtools">
+        <div class="sec-hdr"><div><h2>Design Tools</h2><p>Electrical calculators · CEC (CSA C22.1:21)</p></div></div>
+
+        <div class="dt-tabs">
+          <button class="dt-tab act" data-tool="conduit" onclick="dtSelectTool(this)">Conduit Sizing</button>
+          <button class="dt-tab dt-soon" disabled title="Coming soon">Voltage Drop</button>
+          <button class="dt-tab dt-soon" disabled title="Coming soon">Fault Current</button>
+        </div>
+
+        <div id="dt-conduit">
+          <div class="g2">
+            <div class="card">
+              <div class="dt-ctitle">⚡ Add Conductors</div>
+              <label class="dt-lbl">Conductor Type</label>
+              <select id="dt-condType" class="dt-inp" onchange="dtOnTypeChange()">
+                <option value="T90">T90 (90°C) — building wire</option>
+                <option value="RWU90">RWU90 (90°C) — underground</option>
+              </select>
+              <div class="dt-row2">
+                <div><label class="dt-lbl">Wire Size</label><select id="dt-wireSize" class="dt-inp"></select></div>
+                <div><label class="dt-lbl">Quantity</label><input type="number" id="dt-qty" class="dt-inp" value="1" min="1" max="99"></div>
+              </div>
+              <div id="dt-areaPreview" class="dt-preview"></div>
+              <button class="btn-p dt-btn-full" onclick="dtAddConductor()">+ Add to List</button>
+            </div>
+
+            <div class="card">
+              <div class="dt-ctitle">🔧 Conduit Type</div>
+              <div class="dt-ctabs" id="dt-conduitTabs">
+                <button class="dt-ctab act" data-type="EMT" onclick="dtSelectConduit(this)">EMT</button>
+                <button class="dt-ctab" data-type="RMC" onclick="dtSelectConduit(this)">RMC / GRC</button>
+                <button class="dt-ctab" data-type="PVC" onclick="dtSelectConduit(this)">Rigid PVC</button>
+                <button class="dt-ctab" data-type="FMC" onclick="dtSelectConduit(this)">FMC</button>
+                <button class="dt-ctab" data-type="LFMC" onclick="dtSelectConduit(this)">LFMC</button>
+              </div>
+              <div class="dt-cdesc" id="dt-conduitDesc"></div>
+              <div class="dt-listhdr"><div class="dt-ctitle" style="margin:0">📋 Conductor List</div><button class="dt-btn-ghost" onclick="dtClearAll()">Clear All</button></div>
+              <div class="dt-list" id="dt-conductorList"></div>
+              <div id="dt-totalBar" class="dt-hidden dt-totalbar"></div>
+            </div>
+          </div>
+
+          <button class="btn-p dt-btn-calc" onclick="dtCalculate()">⚡ Calculate Minimum Conduit Size</button>
+
+          <div id="dt-results" class="dt-hidden">
+            <div class="card">
+              <div class="dt-stitle">Summary</div>
+              <div class="dt-summary" id="dt-summaryGrid"></div>
+              <div class="dt-stitle">All Conduit Sizes — Fill Analysis</div>
+              <div class="dt-tablewrap"><table class="dt-table"><thead><tr><th>Trade Size</th><th>Metric</th><th>Internal ID (mm)</th><th>Int. Area (mm²)</th><th>Fill %</th><th>Max</th><th>Status</th></tr></thead><tbody id="dt-resultsTable"></tbody></table></div>
+              <div class="dt-stitle">Ampacity Derating · CEC Rule 4-004</div>
+              <div class="dt-derate" id="dt-derateGrid"></div>
+              <div class="dt-note" id="dt-noteBox"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="sec" id="sec-caexercise">
         <div id="cax-inner"></div>
       </div>
@@ -1885,7 +2008,7 @@ function startClock() {
 }
 
 /* ─── NAV ────────────────────────────────────── */
-const TITLES = { dashboard:'Dashboard', training:'Training Hub', selfcheck:'Self-Check Tool', sops:'Standard Operating Procedures', caexercise:'CA Exercise', expenses:'Expenses', timesheets:'Timesheets', pursuits:'Pursuits', admin:'Admin Panel' };
+const TITLES = { dashboard:'Dashboard', training:'Training Hub', selfcheck:'Self-Check Tool', sops:'Standard Operating Procedures', designtools:'Design Tools', caexercise:'CA Exercise', expenses:'Expenses', timesheets:'Timesheets', pursuits:'Pursuits', admin:'Admin Panel' };
 let currentPage = 'dashboard';
 function nav(page, el) {
   currentPage = page;
@@ -6749,6 +6872,38 @@ window.addEventListener('load', () => {
     if (cnt && body) cnt.textContent = body.querySelectorAll('input').length + ' items';
   });
 });
+</script>
+<script>
+/* ══════ DESIGN TOOLS · CONDUIT SIZING (CEC CSA C22.1:21) ══════ */
+const DT_CONDUCTOR_AREAS={
+T90:{'14 AWG':6.16,'12 AWG':8.45,'10 AWG':13.66,'8 AWG':23.67,'6 AWG':32.67,'4 AWG':53.20,'3 AWG':62.77,'2 AWG':74.82,'1 AWG':100.82,'1/0 AWG':120.18,'2/0 AWG':143.99,'3/0 AWG':172.96,'4/0 AWG':208.93,'250 kcmil':255.60,'300 kcmil':296.81,'350 kcmil':335.56,'400 kcmil':377.72,'450 kcmil':417.28,'500 kcmil':455.79},
+RWU90:{'14 AWG':18.70,'12 AWG':22.56,'10 AWG':27.99,'8 AWG':47.29,'6 AWG':59.72,'4 AWG':77.76,'3 AWG':89.42,'2 AWG':103.51,'1 AWG':137.89,'1/0 AWG':160.16,'2/0 AWG':187.48,'3/0 AWG':220.62,'4/0 AWG':262.45,'250 kcmil':320.47,'300 kcmil':364.40,'350 kcmil':408.64,'400 kcmil':455.03,'450 kcmil':498.36,'500 kcmil':540.78,'600 kcmil':661.43}
+};
+const DT_TYPE_NAMES={T90:'T90',RWU90:'RWU90'};
+const DT_CONDUIT_DATA={
+EMT:{name:'EMT — Electrical Metallic Tubing',desc:'Thin-wall steel tubing. Most common in commercial & industrial, interior or protected. CEC Table 9A.',sizes:[{trade:'1/2"',metric:'16',id:15.4,area:186},{trade:'3/4"',metric:'21',id:20.5,area:330},{trade:'1"',metric:'27',id:26.2,area:539},{trade:'1-1/4"',metric:'35',id:34.6,area:940},{trade:'1-1/2"',metric:'41',id:40.5,area:1288},{trade:'2"',metric:'53',id:52.1,area:2132},{trade:'2-1/2"',metric:'63',id:69.4,area:3783},{trade:'3"',metric:'78',id:85.2,area:5701},{trade:'3-1/2"',metric:'91',id:97.4,area:7451},{trade:'4"',metric:'103',id:110.0,area:9503}]},
+RMC:{name:'RMC / GRC — Rigid Metal Conduit',desc:'Heavy-wall galvanized steel. Maximum protection, harsh/exposed/hazardous locations. CEC Table 9A.',sizes:[{trade:'1/2"',metric:'16',id:16.05,area:202},{trade:'3/4"',metric:'21',id:21.23,area:354},{trade:'1"',metric:'27',id:27.0,area:573},{trade:'1-1/4"',metric:'35',id:35.41,area:985},{trade:'1-1/2"',metric:'41',id:41.25,area:1336},{trade:'2"',metric:'53',id:52.91,area:2199},{trade:'2-1/2"',metric:'63',id:63.22,area:3139},{trade:'3"',metric:'78',id:78.49,area:4839},{trade:'3-1/2"',metric:'91',id:90.68,area:6458},{trade:'4"',metric:'103',id:102.87,area:8311},{trade:'5"',metric:'129',id:128.85,area:13039},{trade:'6"',metric:'155',id:154.76,area:18811}]},
+PVC:{name:'Rigid PVC Conduit',desc:'Non-metallic, corrosion resistant. Underground, wet locations, concrete encasement. CEC Table 9A.',sizes:[{trade:'1/2"',metric:'16',id:14.57,area:167},{trade:'3/4"',metric:'21',id:19.77,area:307},{trade:'1"',metric:'27',id:25.4,area:507},{trade:'1-1/4"',metric:'35',id:31.75,area:792},{trade:'1-1/2"',metric:'41',id:38.1,area:1140},{trade:'2"',metric:'53',id:50.8,area:2027},{trade:'2-1/2"',metric:'63',id:61.3,area:2951},{trade:'3"',metric:'78',id:76.2,area:4560},{trade:'3-1/2"',metric:'91',id:88.4,area:6138},{trade:'4"',metric:'103',id:100.1,area:7870},{trade:'5"',metric:'129',id:125.85,area:12439},{trade:'6"',metric:'155',id:149.75,area:17613}]},
+FMC:{name:'FMC — Flexible Metal Conduit',desc:'Flexible interlocked steel armour. Equipment connections, short exposed runs. CEC Table 9A.',sizes:[{trade:'3/8"',metric:'12',id:9.52,area:71},{trade:'1/2"',metric:'16',id:15.88,area:198},{trade:'3/4"',metric:'21',id:20.62,area:334},{trade:'1"',metric:'27',id:25.4,area:507},{trade:'1-1/4"',metric:'35',id:31.75,area:792},{trade:'1-1/2"',metric:'41',id:38.1,area:1140},{trade:'2"',metric:'53',id:50.8,area:2027},{trade:'2-1/2"',metric:'63',id:63.5,area:3167},{trade:'3"',metric:'78',id:76.2,area:4560},{trade:'3-1/2"',metric:'91',id:88.9,area:6207},{trade:'4"',metric:'103',id:101.6,area:8107}]},
+LFMC:{name:'LFMC — Liquid-Tight Flexible Metal Conduit',desc:'Flexible metal with liquid-tight PVC jacket. Final connections to vibrating equipment. CEC Table 9A.',sizes:[{trade:'3/8"',metric:'12',id:12.29,area:119},{trade:'1/2"',metric:'16',id:15.8,area:196},{trade:'3/4"',metric:'21',id:20.83,area:341},{trade:'1"',metric:'27',id:26.44,area:549},{trade:'1-1/4"',metric:'35',id:35.05,area:965},{trade:'1-1/2"',metric:'41',id:40.01,area:1257},{trade:'2"',metric:'53',id:51.31,area:2068},{trade:'2-1/2"',metric:'63',id:62.99,area:3116},{trade:'3"',metric:'78',id:77.98,area:4776},{trade:'3-1/2"',metric:'91',id:88.9,area:6207},{trade:'4"',metric:'103',id:101.6,area:8107}]}
+};
+const DT_DERATE=[{label:'1–3 current-carrying',cec:'Tables 1–4 (base ampacity)',factor:1.00},{label:'4–6 current-carrying',cec:'Rule 4-004(1)(a)',factor:0.80},{label:'7–9 current-carrying',cec:'Rule 4-004(1)(a)',factor:0.70},{label:'10–20 current-carrying',cec:'Rule 4-004(1)(a)',factor:0.50},{label:'21–30 current-carrying',cec:'Rule 4-004(1)(a)',factor:0.45},{label:'31–40 current-carrying',cec:'Rule 4-004(1)(a)',factor:0.40},{label:'41+ current-carrying',cec:'Rule 4-004(1)(a)',factor:0.35}];
+let dtConductors=[],dtSelectedConduit='EMT',dtInited=false;
+function dtDesignInit(){if(dtInited)return;dtInited=true;dtPopulateWireSizes();dtUpdateConduitDesc();dtRenderList();dtUpdateAreaPreview();var ws=document.getElementById('dt-wireSize');var q=document.getElementById('dt-qty');if(ws)ws.addEventListener('change',dtUpdateAreaPreview);if(q)q.addEventListener('input',dtUpdateAreaPreview);}
+function dtPopulateWireSizes(){const type=document.getElementById('dt-condType').value;const sel=document.getElementById('dt-wireSize');const prev=sel.value;sel.innerHTML='';const av=Object.keys(DT_CONDUCTOR_AREAS[type]);av.forEach(function(sz){const o=document.createElement('option');o.value=sz;o.textContent=sz;sel.appendChild(o);});if(av.indexOf(prev)>=0)sel.value=prev;dtUpdateAreaPreview();}
+function dtOnTypeChange(){dtPopulateWireSizes();}
+function dtUpdateAreaPreview(){const type=document.getElementById('dt-condType').value;const size=document.getElementById('dt-wireSize').value;const qty=parseInt(document.getElementById('dt-qty').value)||1;const area=DT_CONDUCTOR_AREAS[type]&&DT_CONDUCTOR_AREAS[type][size];const el=document.getElementById('dt-areaPreview');if(area){el.textContent='Each: '+area.toFixed(2)+' mm²  ·  ×'+qty+' = '+(area*qty).toFixed(2)+' mm²';}else{el.textContent='';}}
+function dtUpdateConduitDesc(){const d=DT_CONDUIT_DATA[dtSelectedConduit];document.getElementById('dt-conduitDesc').textContent=d?d.desc:'';}
+function dtSelectConduit(btn){document.querySelectorAll('#dt-conduitTabs .dt-ctab').forEach(function(t){t.classList.remove('act');});btn.classList.add('act');dtSelectedConduit=btn.dataset.type;dtUpdateConduitDesc();dtHideResults();}
+function dtSelectTool(btn){document.querySelectorAll('#sec-designtools .dt-tab').forEach(function(t){t.classList.remove('act');});btn.classList.add('act');}
+function dtAddConductor(){const type=document.getElementById('dt-condType').value;const size=document.getElementById('dt-wireSize').value;const qty=parseInt(document.getElementById('dt-qty').value)||1;if(qty<1||qty>99){alert('Quantity must be 1–99.');return;}const area=DT_CONDUCTOR_AREAS[type]&&DT_CONDUCTOR_AREAS[type][size];if(!area){alert('Wire size not available for this type.');return;}dtConductors.push({type:type,name:DT_TYPE_NAMES[type],size:size,qty:qty,area:area});dtRenderList();dtHideResults();}
+function dtRemoveConductor(i){dtConductors.splice(i,1);dtRenderList();dtHideResults();}
+function dtClearAll(){if(dtConductors.length===0)return;dtConductors=[];dtRenderList();dtHideResults();}
+function dtRenderList(){const list=document.getElementById('dt-conductorList');const bar=document.getElementById('dt-totalBar');if(dtConductors.length===0){list.innerHTML='<div class="dt-empty">No conductors added yet. Use the form on the left.</div>';bar.classList.add('dt-hidden');return;}list.innerHTML=dtConductors.map(function(c,i){return '<div class="dt-item"><div class="dt-item-info"><span class="dt-pill">'+c.size+'</span><span style="font-weight:600">'+c.name+'</span><span style="color:var(--teal);font-weight:700">×'+c.qty+'</span><span class="dt-area">'+(c.area*c.qty).toFixed(2)+' mm²</span></div><button class="dt-x" onclick="dtRemoveConductor('+i+')" title="Remove">✕</button></div>';}).join('');const tc=dtConductors.reduce(function(s,c){return s+c.qty;},0);const ta=dtConductors.reduce(function(s,c){return s+c.area*c.qty;},0);bar.classList.remove('dt-hidden');bar.innerHTML='<span><strong>'+tc+'</strong> conductor'+(tc!==1?'s':'')+' total</span><span>Combined area: <strong>'+ta.toFixed(2)+' mm²</strong></span>';}
+function dtHideResults(){document.getElementById('dt-results').classList.add('dt-hidden');}
+function dtCalculate(){if(dtConductors.length===0){alert('Add at least one conductor before calculating.');return;}const tc=dtConductors.reduce(function(s,c){return s+c.qty;},0);const ta=dtConductors.reduce(function(s,c){return s+c.area*c.qty;},0);const over200=tc>200;let maxFill;if(tc===1)maxFill=0.53;else if(tc===2)maxFill=0.31;else maxFill=0.40;const sizes=DT_CONDUIT_DATA[dtSelectedConduit].sizes;let minSize=null;const tbody=document.getElementById('dt-resultsTable');tbody.innerHTML='';sizes.forEach(function(cd){const maxArea=cd.area*maxFill;const fill=(ta/cd.area)*100;const pass=ta<=maxArea;if(pass&&!minSize)minSize=cd;const isMin=(cd===minSize);const col=!pass?'var(--danger)':fill>(maxFill*100*0.9)?'var(--warn)':'#15803d';const w=Math.min(fill,100).toFixed(1);let badge;if(!pass)badge='<span class="dt-badge fail">Too Small</span>';else if(isMin)badge='<span class="dt-badge min">✓ Minimum</span>';else badge='<span class="dt-badge pass">OK</span>';const tr=document.createElement('tr');if(isMin)tr.classList.add('rec');tr.innerHTML='<td><strong>'+cd.trade+'</strong></td><td>'+cd.metric+' mm</td><td>'+cd.id.toFixed(1)+'</td><td>'+cd.area.toFixed(0)+'</td><td><div class="dt-fillwrap"><div class="dt-fillbg"><div class="dt-fillfg" style="width:'+w+'%;background:'+col+'"></div></div><span class="dt-fillpct" style="color:'+col+'">'+fill.toFixed(1)+'%</span></div></td><td>'+(maxFill*100).toFixed(0)+'%</td><td>'+badge+'</td>';tbody.appendChild(tr);});const fillAtMin=minSize?(ta/minSize.area*100).toFixed(1):null;document.getElementById('dt-summaryGrid').innerHTML='<div class="dt-sitem hl"><div class="dt-val">'+(minSize?minSize.trade:'> largest')+'</div><div class="dt-sub">Min Conduit</div></div><div class="dt-sitem hl"><div class="dt-val '+(minSize?'green':'red')+'">'+(fillAtMin?fillAtMin+'%':'N/A')+'</div><div class="dt-sub">Fill at Min</div></div><div class="dt-sitem"><div class="dt-val">'+tc+'</div><div class="dt-sub">Conductors</div></div><div class="dt-sitem"><div class="dt-val">'+(maxFill*100).toFixed(0)+'%</div><div class="dt-sub">Max Fill · Table 8</div></div><div class="dt-sitem"><div class="dt-val">'+ta.toFixed(0)+'</div><div class="dt-sub">Total mm²</div></div><div class="dt-sitem"><div class="dt-val" style="font-size:22px">'+DT_CONDUIT_DATA[dtSelectedConduit].name.split(' — ')[0]+'</div><div class="dt-sub">Conduit</div></div>'+(over200?'<div class="dt-sitem" style="border-color:var(--danger);background:var(--danger-g);grid-column:1/-1"><div class="dt-val red" style="font-size:16px">⚠ EXCEEDS 200 CONDUCTORS</div><div class="dt-sub" style="color:var(--danger)">Rule 12-910(3) — max 200 per conduit</div></div>':'');const ranges=[[1,3],[4,6],[7,9],[10,20],[21,30],[31,40],[41,999]];let active=null;DT_DERATE.forEach(function(r,i){if(tc>=ranges[i][0]&&tc<=ranges[i][1])active=r;});document.getElementById('dt-derateGrid').innerHTML=DT_DERATE.map(function(r){const on=(r===active);const cls=r.factor===1?'df-g':r.factor>=0.70?'df-y':'df-r';return '<div class="dt-drow'+(on?' on':'')+'"><span>'+r.label+(on?' <strong>← current</strong>':'')+'</span><div style="text-align:right"><span class="dt-factor '+cls+'">'+(r.factor*100).toFixed(0)+'%</span><div style="font-size:9px;color:var(--text-400)">'+r.cec+'</div></div></div>';}).join('');const cl=dtConductors.map(function(c){return c.qty+'× '+c.size+' '+c.name;}).join(', ');document.getElementById('dt-noteBox').innerHTML='<strong>CEC references (CSA C22.1:21):</strong><br>• <strong>Rule 12-910(3)</strong> — max 200 conductors in one conduit or tubing<br>• <strong>Rule 12-910(4) → Table 8</strong> — max fill: 1 cond = 53% · 2 cond = 31% · 3+ cond = 40%<br>• <strong>Rule 12-910(4)(a) → Tables 9A–9H</strong> — usable interior area by conduit type<br>• <strong>Rule 12-910(4)(c) → Tables 6A–6K</strong> — insulated conductor areas<br>• <strong>Rule 4-004</strong> — ampacity derating for multiple current-carrying conductors<br><br><strong>This run:</strong> '+cl+' in '+DT_CONDUIT_DATA[dtSelectedConduit].name+' → min size <strong>'+(minSize?minSize.trade+' ('+minSize.metric+' mm)':'exceeds largest listed size — use parallel conduits')+'</strong>.'+(over200?'<br><strong style="color:var(--danger)">⚠ Rule 12-910(3) violation: '+tc+' conductors exceeds 200.</strong>':'')+'<br><br>⚠️ <em>Conductor areas per CEC Tables 6A–6K; conduit interior areas per Tables 9A–9H. Verify against the current CEC (CSA C22.1) and provincial amendments. Estimation aid only — not a sole engineering design document.</em>';document.getElementById('dt-results').classList.remove('dt-hidden');document.getElementById('dt-results').scrollIntoView({behavior:'smooth',block:'start'});}
+dtDesignInit();
+
 </script>
 </body>
 </html>
