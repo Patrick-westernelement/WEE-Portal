@@ -720,6 +720,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 #sec-designtools .vd-badge.ok{background:rgba(21,128,61,.12);color:#15803d}
 #sec-designtools .vd-badge.bad{background:var(--danger-g);color:var(--danger)}
 
+  #sec-designtools .vd-table select.vd-ph{width:54px}
+#sec-designtools .vd-table select.vd-v{width:90px}
   </style>
 </head>
 <body>
@@ -1358,12 +1360,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
             </div>
           </div>
         </div>
-        <div id="dt-voltage" style="display:none">
+                <div id="dt-voltage" style="display:none">
           <div class="card">
-            <div class="dt-ctitle">⚡ Circuit</div>
+            <div class="dt-ctitle">⚡ Global Settings</div>
             <div class="vd-grid">
-              <div><label class="dt-lbl">System Voltage</label><select id="vd-volt" class="vd-inp" onchange="vdCalc()"></select></div>
-              <div><label class="dt-lbl">Phase</label><select id="vd-phase" class="vd-inp" onchange="vdCalc()"><option value="1">Single-phase</option><option value="3">Three-phase</option></select></div>
               <div><label class="dt-lbl">Conductor</label><select id="vd-mat" class="vd-inp" onchange="vdCalc()"><option value="12.25">Copper</option><option value="20.1">Aluminum</option></select></div>
               <div><label class="dt-lbl">Conductor Temperature</label><select id="vd-temp" class="vd-inp" onchange="vdCalc()"><option value="60">60 °C</option><option value="75">75 °C</option><option value="90" selected>90 °C</option></select></div>
               <div><label class="dt-lbl">VD Limit (Rule 8-102)</label><select id="vd-limit" class="vd-inp" onchange="vdCalc()"><option value="3">3% — feeder or branch circuit</option><option value="5">5% — service to point of utilization</option></select></div>
@@ -1372,9 +1372,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
             <div class="vd-bar"><button class="dt-btn-ghost" onclick="vdLoadSample()">Load sample</button><button class="dt-btn-ghost" onclick="vdClearAll()">Clear</button></div>
           </div>
           <div class="card">
-            <div class="dt-ctitle" style="display:flex;justify-content:space-between;align-items:center"><span>📋 Series Segments <span style="color:var(--text-400);font-weight:400;text-transform:none;letter-spacing:0"> — segment 1 is closest to the source</span></span></div>
+            <div class="dt-ctitle" style="display:flex;justify-content:space-between;align-items:center"><span>📋 Series Segments <span style="color:var(--text-400);font-weight:400;text-transform:none;letter-spacing:0"> — set phase &amp; voltage per segment; segment 1 is closest to the source</span></span></div>
             <div class="dt-tablewrap"><table class="vd-table">
-              <thead><tr><th>Seg</th><th>Wire Size</th><th>Length (<span id="vd-ulab">ft</span>)</th><th>Load (VA)</th><th>Amps</th><th>Seg VD (V)</th><th>Seg VD %</th><th>Cumul VD %</th><th></th></tr></thead>
+              <thead><tr><th>Seg</th><th>Wire Size</th><th>Phase</th><th>Voltage</th><th>Length (<span id="vd-ulab">ft</span>)</th><th>Load (VA)</th><th>Amps</th><th>Seg VD (V)</th><th>Seg VD %</th><th>Cumul VD %</th><th></th></tr></thead>
               <tbody id="vd-tb"></tbody>
             </table></div>
             <div class="vd-bar"><button class="btn-p" style="cursor:pointer;padding:9px 18px" onclick="vdAddSeg()">+ Add Segment</button><span class="vd-uset">Length unit <select id="vd-unit" class="vd-inp" onchange="vdSetUnit()"><option value="ft">feet</option><option value="m">metres</option></select></span></div>
@@ -6967,43 +6967,41 @@ dtDesignInit();
 
 </script>
 <script>
-/* ══════ DESIGN TOOLS · VOLTAGE DROP (CEC Table D3 basis) ══════ */
+/* ══════ DESIGN TOOLS · VOLTAGE DROP (CEC Table D3 basis, per-segment phase/voltage) ══════ */
 const VD_KNAMES={'12.25':'Copper','20.1':'Aluminum'};
 const VD_CM={'#14':4110,'#12':6530,'#10':10380,'#8':16510,'#6':26240,'#4':41740,'#3':52620,'#2':66360,'#1':83690,'1/0':105600,'2/0':133100,'3/0':167800,'4/0':211600,'250 kcmil':250000,'300 kcmil':300000,'350 kcmil':350000,'400 kcmil':400000,'500 kcmil':500000};
-const VD_CF={'60':{100:1.00,90:1.02,80:1.04,70:1.06,60:1.07,50:1.09,40:1.10},'75':{100:0.96,90:1.00,80:1.00,70:1.03,60:1.06,50:1.07,40:1.09},'90':{100:0.91,90:0.95,80:1.00,70:1.00,60:1.04,50:1.06,40:1.08},'110':{100:0.85,90:0.90,80:0.95,70:1.00,60:1.02,50:1.05,40:1.07},'125':{100:0.82,90:0.87,80:0.92,70:0.97,60:1.00,50:1.04,40:1.07},'200':{100:0.68,90:0.76,80:0.83,70:0.90,60:0.96,50:1.00,40:1.04}};
-const VD_VOLTS=[['12 VDC',12],['24 VDC',24],['120 VAC',120],['208 VAC',208],['240 VAC',240],['277 VAC',277],['480 VAC',480],['600 VAC',600]];
-let vdSegs=[{wire:'#10',len:'',va:''},{wire:'#10',len:'',va:''},{wire:'#10',len:'',va:''}];
+const VD_CF={'60':{100:1.00},'75':{100:0.96},'90':{100:0.91}};
+const VD_VOLTS=[['12 VDC',12],['24 VDC',24],['120 V',120],['208 V',208],['240 V',240],['277 V',277],['480 V',480],['600 V',600]];
+function vdNewSeg(prev){return {wire:prev?prev.wire:'#10',phase:prev?prev.phase:'1',volt:prev?prev.volt:'208',len:'',va:''};}
+let vdSegs=[vdNewSeg(),vdNewSeg(),vdNewSeg()];
 let vdUnit='ft', vdInited=false;
-function vdInit(){if(vdInited)return;vdInited=true;var vs=document.getElementById('vd-volt');if(!vs)return;VD_VOLTS.forEach(function(x){var o=document.createElement('option');o.value=x[1];o.textContent=x[0];vs.appendChild(o);});vs.value=208;vdRender();}
+function vdInit(){if(vdInited)return;vdInited=true;if(document.getElementById('vd-tb'))vdRender();}
 function vdWireOpts(sel){return Object.keys(VD_CM).map(function(w){return '<option value="'+w+'"'+(w===sel?' selected':'')+'>'+w+'</option>';}).join('');}
+function vdVoltOpts(sel){return VD_VOLTS.map(function(x){return '<option value="'+x[1]+'"'+(String(x[1])===sel?' selected':'')+'>'+x[0]+'</option>';}).join('');}
+function vdPhaseOpts(sel){return '<option value="1"'+(sel==='1'?' selected':'')+'>1φ</option><option value="3"'+(sel==='3'?' selected':'')+'>3φ</option>';}
 function vdSetUnit(){vdUnit=document.getElementById('vd-unit').value;document.getElementById('vd-ulab').textContent=vdUnit;vdCalc();}
-function vdRender(){document.getElementById('vd-tb').innerHTML=vdSegs.map(function(s,i){return '<tr><td class="vd-seg-n">'+(i+1)+'</td><td><select onchange="vdUpd('+i+',\'wire\',this.value)">'+vdWireOpts(s.wire)+'</select></td><td><input type="number" min="0" value="'+s.len+'" oninput="vdUpd('+i+',\'len\',this.value)" placeholder="0"></td><td><input type="number" min="0" value="'+s.va+'" oninput="vdUpd('+i+',\'va\',this.value)" placeholder="0"></td><td class="calc" id="vda'+i+'">—</td><td class="calc" id="vdv'+i+'">—</td><td class="calc" id="vdp'+i+'">—</td><td class="calc cum" id="vdc'+i+'">—</td><td><button class="vd-xbtn" onclick="vdRm('+i+')" title="Remove">✕</button></td></tr>';}).join('');vdCalc();}
+function vdRender(){document.getElementById('vd-tb').innerHTML=vdSegs.map(function(s,i){return '<tr><td class="vd-seg-n">'+(i+1)+'</td>'+'<td><select onchange="vdUpd('+i+',\'wire\',this.value)">'+vdWireOpts(s.wire)+'</select></td>'+'<td><select class="vd-ph" onchange="vdUpd('+i+',\'phase\',this.value)">'+vdPhaseOpts(s.phase)+'</select></td>'+'<td><select class="vd-v" onchange="vdUpd('+i+',\'volt\',this.value)">'+vdVoltOpts(s.volt)+'</select></td>'+'<td><input type="number" min="0" value="'+s.len+'" oninput="vdUpd('+i+',\'len\',this.value)" placeholder="0"></td>'+'<td><input type="number" min="0" value="'+s.va+'" oninput="vdUpd('+i+',\'va\',this.value)" placeholder="0"></td>'+'<td class="calc" id="vda'+i+'">—</td><td class="calc" id="vdv'+i+'">—</td><td class="calc" id="vdp'+i+'">—</td><td class="calc cum" id="vdc'+i+'">—</td>'+'<td><button class="vd-xbtn" onclick="vdRm('+i+')" title="Remove">✕</button></td></tr>';}).join('');vdCalc();}
 function vdUpd(i,k,val){vdSegs[i][k]=val;vdCalc();}
-function vdAddSeg(){if(vdSegs.length>=20)return;vdSegs.push({wire:vdSegs.length?vdSegs[vdSegs.length-1].wire:'#10',len:'',va:''});vdRender();}
+function vdAddSeg(){if(vdSegs.length>=20)return;vdSegs.push(vdNewSeg(vdSegs[vdSegs.length-1]));vdRender();}
 function vdRm(i){if(vdSegs.length<=1)return;vdSegs.splice(i,1);vdRender();}
-function vdClearAll(){vdSegs=[{wire:'#10',len:'',va:''},{wire:'#10',len:'',va:''},{wire:'#10',len:'',va:''}];vdRender();}
-function vdLoadSample(){document.getElementById('vd-volt').value=208;document.getElementById('vd-phase').value=1;document.getElementById('vd-mat').value='12.25';document.getElementById('vd-temp').value='90';document.getElementById('vd-unit').value='ft';vdUnit='ft';document.getElementById('vd-ulab').textContent='ft';vdSegs=[{wire:'#10',len:245,va:59},{wire:'#10',len:115,va:59},{wire:'#10',len:65,va:59},{wire:'#10',len:65,va:59},{wire:'#10',len:123,va:59}];vdRender();}
+function vdClearAll(){vdSegs=[vdNewSeg(),vdNewSeg(),vdNewSeg()];vdRender();}
+function vdLoadSample(){document.getElementById('vd-mat').value='12.25';document.getElementById('vd-temp').value='90';document.getElementById('vd-unit').value='ft';vdUnit='ft';document.getElementById('vd-ulab').textContent='ft';vdSegs=[{wire:'#4',phase:'3',volt:'208',len:150,va:0},{wire:'#10',phase:'1',volt:'120',len:80,va:1500}];vdRender();}
 function vdCalc(){
-  var V=parseFloat(document.getElementById('vd-volt').value);
-  var ph=parseInt(document.getElementById('vd-phase').value);
   var K60v=parseFloat(document.getElementById('vd-mat').value);
   var temp=document.getElementById('vd-temp').value;
-  var pct=100;
   var limit=parseFloat(document.getElementById('vd-limit').value);
-  var cf=VD_CF[temp][pct];
-  var Keff=K60v/cf;
-  var factor=ph===3?Math.sqrt(3):2;
-  var idiv=ph===3?Math.sqrt(3)*V:V;
+  var cf=VD_CF[temp][100]; var Keff=K60v/cf;
   var toFt=vdUnit==='m'?3.28084:1;
-  document.getElementById('vd-readout').innerHTML='CEC Table D3 basis · 60&nbsp;°C '+VD_KNAMES[String(K60v)]+' · correction factor <b>'+cf.toFixed(2)+'</b> (Note 3: '+temp+'&nbsp;°C conductor, full load) · effective K <b>'+Keff.toFixed(2)+'</b> Ω·cmil/ft';
-  var amps=new Array(vdSegs.length).fill(0);
-  for(var i=vdSegs.length-1;i>=0;i--){amps[i]=((parseFloat(vdSegs[i].va)||0)/idiv)+((i+1<vdSegs.length)?amps[i+1]:0);}
-  var cum=0,anyData=false,finalCum=0;
+  document.getElementById('vd-readout').innerHTML='CEC Table D3 basis · 60&nbsp;°C '+VD_KNAMES[String(K60v)]+' base · correction factor <b>'+cf.toFixed(2)+'</b> (Note 3: '+temp+'&nbsp;°C conductor, full load) · effective K <b>'+Keff.toFixed(2)+'</b> Ω·cmil/ft';
+  var n=vdSegs.length; var amps=new Array(n).fill(0); var cumVA=0;
+  for(var i=n-1;i>=0;i--){cumVA+=(parseFloat(vdSegs[i].va)||0);var Vs=parseFloat(vdSegs[i].volt);var idiv=(vdSegs[i].phase==='3')?Math.sqrt(3)*Vs:Vs;amps[i]=cumVA/idiv;}
+  var cum=0,anyData=false,finalCum=0,totalVA=0;
   vdSegs.forEach(function(s,i){
-    var len=(parseFloat(s.len)||0)*toFt, va=parseFloat(s.va)||0, cm=VD_CM[s.wire];
+    var len=(parseFloat(s.len)||0)*toFt, va=parseFloat(s.va)||0, cm=VD_CM[s.wire], Vs=parseFloat(s.volt);
+    var factor=(s.phase==='3')?Math.sqrt(3):2;
     var vd=(factor*Keff*len*amps[i])/cm;
-    var vdp=(vd/V)*100;
-    cum+=vdp; finalCum=cum;
+    var vdp=(vd/Vs)*100;
+    cum+=vdp; finalCum=cum; totalVA+=va;
     if(len>0||va>0)anyData=true;
     document.getElementById('vda'+i).textContent=amps[i]?amps[i].toFixed(2):'—';
     document.getElementById('vdv'+i).textContent=vd?vd.toFixed(3):'—';
@@ -7014,14 +7012,12 @@ function vdCalc(){
   var res=document.getElementById('vd-res');
   if(!anyData){res.style.display='none';return;}
   res.style.display='';
-  var totalVA=vdSegs.reduce(function(a,s){return a+(parseFloat(s.va)||0);},0);
   var pass=finalCum<=limit;
-  document.getElementById('vd-sum').innerHTML='<div class="vd-sit hl"><div class="vd-sv '+(pass?'ok':'bad')+'">'+finalCum.toFixed(2)+'%</div><div class="vd-ssub">Total VD</div></div><div class="vd-sit"><div class="vd-sv">'+(V*finalCum/100).toFixed(2)+'</div><div class="vd-ssub">Volts Dropped</div></div><div class="vd-sit"><div class="vd-sv">'+V+'</div><div class="vd-ssub">'+(ph===3?'Volts (L-L)':'Volts')+'</div></div><div class="vd-sit"><div class="vd-sv">'+(amps[0]?amps[0].toFixed(1):'0')+'</div><div class="vd-ssub">Source Amps</div></div><div class="vd-sit"><div class="vd-sv">'+totalVA+'</div><div class="vd-ssub">Total Load VA</div></div>';
+  document.getElementById('vd-sum').innerHTML='<div class="vd-sit hl"><div class="vd-sv '+(pass?'ok':'bad')+'">'+finalCum.toFixed(2)+'%</div><div class="vd-ssub">Total VD to Load</div></div><div class="vd-sit"><div class="vd-sv">'+n+'</div><div class="vd-ssub">Segments</div></div><div class="vd-sit"><div class="vd-sv">'+totalVA+'</div><div class="vd-ssub">Total Load VA</div></div><div class="vd-sit"><div class="vd-sv">'+(amps[0]?amps[0].toFixed(1):'0')+'</div><div class="vd-ssub">Source Amps</div></div>';
   document.getElementById('vd-verdict').innerHTML=pass?'<span class="vd-badge ok">✓ PASS — '+finalCum.toFixed(2)+'% ≤ '+limit+'% limit</span>':'<span class="vd-badge bad">✗ FAIL — '+finalCum.toFixed(2)+'% exceeds '+limit+'% — increase wire size or shorten run</span>';
-  document.getElementById('vd-note').innerHTML='<strong>'+(ph===3?'Three-phase':'Single-phase')+' series voltage drop — CEC Table D3 basis.</strong> Conductor resistance from the CEC 60 °C base (Appendix D, Table D3; copper calibrated to K = 12.25 Ω·cmil/ft), adjusted by the <strong>Note 3 correction factor</strong> for the conductor temperature rating and % of allowable ampacity, then VD = '+(ph===3?'√3':'2')+' × K × L × I ÷ CM. Segment 1 (nearest the source) carries the sum of all downstream loads. Aluminum uses the Note 5 relationship (≈ two AWG sizes smaller than copper).<br>• <strong>Rule 8-102</strong> — voltage drop based on connected load if known, otherwise 80% of the OCPD rating; ≤ <strong>3% in a feeder or branch circuit</strong>, ≤ <strong>5% supply-to-utilization</strong>.<br><br>⚠️ <em>Table D3 excludes inductive reactance and is tabulated to 4/0; larger sizes are an analytical extension of the same basis. Estimation aid only — verify against the current CEC and provincial amendments; not a sole engineering design document.</em>';
+  document.getElementById('vd-note').innerHTML='<strong>Series voltage drop — CEC Table D3 basis, per-segment phase &amp; voltage.</strong> Each segment uses its own phase and voltage: VD = (2 for 1φ, √3 for 3φ) × K × L × I ÷ CM, with I = downstream VA ÷ (V for 1φ, √3·V for 3φ). Conductor resistance from the CEC 60 °C base (Appendix D, Table D3; copper K = 12.25 Ω·cmil/ft) adjusted by the Note 3 correction factor for conductor temperature. Segment percentages add along the run. Segment 1 is closest to the source. Aluminum per Note 5 (≈ two AWG sizes smaller).<br>• <strong>Rule 8-102</strong> — ≤ 3% in any feeder or branch circuit, ≤ 5% from the supply side of the consumer’s service to the point of utilization.<br><br>⚠️ <em>Table D3 excludes inductive reactance and is tabulated to 4/0; larger sizes extend the same basis. Estimation aid only — verify against the current CEC and provincial amendments; not a sole engineering design document.</em>';
 }
 vdInit();
-
 </script>
 </body>
 </html>
